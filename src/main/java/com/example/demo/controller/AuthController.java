@@ -1,26 +1,16 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.request.AddNhanVienForm;
 import com.example.demo.dto.request.SignInForm;
 import com.example.demo.dto.request.SignUpForm;
 import com.example.demo.dto.response.JwtResponse;
 import com.example.demo.dto.response.ResponMessage;
-import com.example.demo.helper.BarCode;
-import com.example.demo.helper.ExcelExporter;
-import com.example.demo.helper.Helper;
-import com.example.demo.model.CTBangCong;
-import com.example.demo.model.ChucVu;
-import com.example.demo.model.NhanVien;
-import com.example.demo.model.PhongBan;
+import com.example.demo.model.Product;
 import com.example.demo.model.Role;
 import com.example.demo.model.RoleName;
 import com.example.demo.model.User;
 import com.example.demo.security.jwt.JwtProvider;
 import com.example.demo.security.userprincal.UserPrinciple;
-import com.example.demo.service.CTBangCongService;
-import com.example.demo.service.ChucVuService;
-import com.example.demo.service.NhanVienService;
-import com.example.demo.service.PhongBanService;
+import com.example.demo.service.impl.ProductServiceImpl;
 import com.example.demo.service.impl.RoleServiceImpl;
 import com.example.demo.service.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +46,8 @@ public class AuthController {
     @Autowired
     UserServiceImpl userService;
     @Autowired
+    ProductServiceImpl productService;
+    @Autowired
     RoleServiceImpl roleService;
     @Autowired
     PasswordEncoder passwordEncoder;
@@ -63,14 +55,7 @@ public class AuthController {
     AuthenticationManager authenticationManager;
     @Autowired
     JwtProvider jwtProvider;
-    @Autowired
-    NhanVienService nhanVienService;
-    @Autowired
-    PhongBanService phongBanService;
-    @Autowired
-   ChucVuService chucVuService;
-    @Autowired
-    CTBangCongService bangCongService;
+
 
     @PostMapping("/signup")
     public ResponseEntity<?> register(@Valid @RequestBody SignUpForm signUpForm) {
@@ -81,7 +66,7 @@ public class AuthController {
             return new ResponseEntity<>(new ResponMessage("The email existed"), HttpStatus.OK);
         }
         User user = new User(signUpForm.getName(), signUpForm.getUsername(), signUpForm.getEmail(),
-                passwordEncoder.encode(signUpForm.getPassword()));
+                passwordEncoder.encode(signUpForm.getPassword()),signUpForm.getAddress());
         Set<String> strRoles = signUpForm.getRoles();
         Set<Role> roles = new HashSet<>();
         strRoles.forEach(role -> {
@@ -109,6 +94,7 @@ public class AuthController {
 
     @PostMapping("/signin")
     public ResponseEntity<?> login(@Valid @RequestBody SignInForm signInForm) {
+        //Xác thực
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(signInForm.getUsername(), signInForm.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -123,118 +109,10 @@ public class AuthController {
         return ResponseEntity.ok(users);
     }
 
-    @PostMapping("/addNhanVien")
-    public ResponseEntity<?> register(@Valid @RequestBody AddNhanVienForm addNhanVienForm, BindingResult bindingResult)  {
-        
-        if (nhanVienService.existsByEmail(addNhanVienForm.getEmail())) {
-            return new ResponseEntity<>(new ResponMessage("The email existed"), HttpStatus.OK);
-        }
-        PhongBan phongBan=phongBanService.findBymaPB(addNhanVienForm.getPhongban_id());
-        ChucVu chucVu=chucVuService.findBymaCV(addNhanVienForm.getChucvu_id());
-        NhanVien nhanVien = new NhanVien(addNhanVienForm.getTenNhanSu(), addNhanVienForm.getCCCD(),
-                addNhanVienForm.getEmail(), addNhanVienForm.getNgaySinh(), addNhanVienForm.getHinhAnh(),
-                addNhanVienForm.getDanToc(), addNhanVienForm.getQuocTich(), addNhanVienForm.getNgayKyHopDong(),
-                addNhanVienForm.getSoTK(),addNhanVienForm.getSDT(),phongBan,chucVu);
 
-                System.out.println(nhanVien.toString());
-                byte[] qrCode = BarCode.getQRCodeImage(nhanVien.toString(), 200, 200);
-                String s = Base64.getEncoder().encodeToString(qrCode);
-                nhanVien.setQrCode(s);
-                nhanVienService.save(nhanVien);
-        return new ResponseEntity<>(new ResponMessage("yes"), HttpStatus.OK);
+    @GetMapping("/products") // List Products
+    public ResponseEntity<List<Product>> listRegisteredProduct() {
+        List<Product> products = productService.findAllProduct();
+        return ResponseEntity.ok(products);
     }
-
-    @DeleteMapping("/deleteNhanVien/{id}")
-    public  ResponseEntity<String> deleteNhanVien(@PathVariable("id") int id) {
-        nhanVienService.deleteById(id);
-        return new ResponseEntity<String>("Nhan Vien deleted successfully!.", HttpStatus.OK);
-    }
-    
-
-    @PutMapping("/updateNhanVien/{id}")
-	public ResponseEntity<NhanVien> updateEmployee(@PathVariable("id") long id ,@RequestBody AddNhanVienForm addNhanVienForm){
-        PhongBan phongBan=phongBanService.findBymaPB(addNhanVienForm.getPhongban_id());
-        ChucVu chucVu=chucVuService.findBymaCV(addNhanVienForm.getChucvu_id());
-        NhanVien nhanVien = new NhanVien(addNhanVienForm.getTenNhanSu(), addNhanVienForm.getCCCD(),
-        addNhanVienForm.getEmail(), addNhanVienForm.getNgaySinh(), addNhanVienForm.getHinhAnh(),
-        addNhanVienForm.getDanToc(), addNhanVienForm.getQuocTich(), addNhanVienForm.getNgayKyHopDong(),
-        addNhanVienForm.getSoTK(),addNhanVienForm.getSDT(),phongBan,chucVu);
-        byte[] qrCode =BarCode.getQRCodeImage(nhanVien.toString(), 200, 200);
-        String s = Base64.getEncoder().encodeToString(qrCode);
-        nhanVien.setQrCode(s);
-        return new ResponseEntity<NhanVien>(nhanVienService.updateNhanVien(nhanVien, id), HttpStatus.OK);
-	}
-
-    @GetMapping("/nhanviens") // List NhanVien
-    public ResponseEntity<List<NhanVien>> listRegisteredNhanVien() {
-        List<NhanVien> nhanVien = nhanVienService.findAllNhanVien();
-        return ResponseEntity.ok(nhanVien);
-    }
-
-    @PostMapping("/nhanvien/upload") // upload list NhanVien file excel
-    public ResponseEntity<?> upload(@RequestParam("file") MultipartFile file) {
-        if(Helper.checkExcelFormat(file)){
-            // true
-            this.nhanVienService.saveFile(file);
-            return new ResponseEntity<>(new ResponMessage("yes"), HttpStatus.OK);
-        }else{
-            return new ResponseEntity<>(new ResponMessage("No"), HttpStatus.OK);
-        }
-       
-    }
-
-    @GetMapping("export") // export excel
-    public void exportToExcel(HttpServletResponse response) throws IOException {
-        response.setContentType("application/octet-stream");
-        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
-        String currentDateTime = dateFormatter.format(new Date());
-
-        String headerKey = "Content-Disposition";
-        String headerValue = "attachment; filename=users_" + currentDateTime + ".xlsx";
-        response.setHeader(headerKey, headerValue);
-
-        List<NhanVien> listNhanVien = nhanVienService.findAllNhanVien();
-
-        ExcelExporter excelExporter = new ExcelExporter(listNhanVien);
-
-        excelExporter.export(response);
-    }
-
-    @PostMapping("/bangcong/upload") // upload list bangcong file excel
-    public ResponseEntity<?> uploadBC(@RequestParam("file") MultipartFile file) {
-        if (Helper.checkExcelFormat(file)) {
-            // true
-           bangCongService.saveFile(file);
-
-            return new ResponseEntity<>(new ResponMessage("yes"), HttpStatus.OK);
-        }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please upload excel file ");
-    }
-
-    @GetMapping("/bangCongs") // List bangcongs
-    public ResponseEntity<List<CTBangCong>> listRegisteredBangCong() {
-        List<CTBangCong> bangCongs = bangCongService.findAllBangCong();
-        return ResponseEntity.ok(bangCongs);
-    }
-
-    
-    @PostMapping("/search")
-    public ResponseEntity<?> Search(@Valid @RequestBody AddNhanVienForm addNhanVienForm) {
-       List<NhanVien> nhanViens= nhanVienService.search(addNhanVienForm.getTenNhanSu());
-       
-        return new ResponseEntity<>(nhanViens, HttpStatus.OK);
-    }
-
-    //HttpServletResponse response trả về request
-    @RequestMapping(value = "qrcode/{id}", method = RequestMethod.GET)
-	public void qrcode(@PathVariable("id") long id ,HttpServletResponse response) throws Exception {
-        NhanVien nhanVien = nhanVienService.findBymaNV(id);
-        byte[] decodedBytes = Base64.getDecoder().decode(nhanVien.getQrCode());
-		response.setContentType("image/png");
-		OutputStream outputStream = response.getOutputStream();
-		outputStream.write(decodedBytes);
-		outputStream.flush();
-		outputStream.close();
-
-	}
 }

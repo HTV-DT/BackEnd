@@ -31,42 +31,53 @@ public class User {
     private String username;
     @NaturalId
     @NotBlank
-    @Size(max = 50)
+    @Size(max = 100)
     @Email
     private String email;
     @JsonIgnore
     @NotBlank
     @Size(min = 6, max = 100)
     private String password;
-    @Lob
-    private String hinhAnh;
+    @NotBlank
+    private String address;
+
     
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_role",
     joinColumns = @JoinColumn(name = "user_id"),inverseJoinColumns = @JoinColumn(name = "role_id"))
     Set<Role> roles = new HashSet<>();
 
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "cart_items",
+    joinColumns = @JoinColumn(name = "user_id"),inverseJoinColumns = @JoinColumn(name = "product_id"))
+    Set<Product> products = new HashSet<>();
+
+    @OneToMany(mappedBy="user") // chú ý biến Category này được khai báo trong Class Product bên dưới. Chúng phải giống y chang nhau cái tên
+    private Set<Order> orders;
+
     public User() {
     }
 
-    public User(Long id, String name, String username, String email, String password, String hinhAnh, Set<Role> roles) {
-        this.id = id;
+    public User( String name, String username, String email, String password,String address,  Set<Role> roles) {
         this.name = name;
         this.username = username;
         this.email = email;
         this.password = password;
-        this.hinhAnh = hinhAnh;
+        this.address = address;
         this.roles = roles;
     }
 
     public User(  @NotBlank @Size(min = 3, max = 50)String name,
                   @NotBlank @Size(min = 3, max = 50)String username,
                   @NotBlank @Size(max = 50) @Email String email,
-                  @NotBlank @Size(min = 6, max = 100)String encode) {
+                  @NotBlank @Size(min = 6, max = 100)String encode,
+                  @NotBlank String address
+                  ) {
         this.name = name;
         this.username = username;
         this.email = email;
         this.password = encode;
+        this.address = address;
     }
 
     public Long getId() {
@@ -109,13 +120,15 @@ public class User {
         this.password = password;
     }
 
-    public String gethinhAnh() {
-        return hinhAnh;
+
+    public String getAddress() {
+        return this.address;
     }
 
-    public void sethinhAnh(String hinhAnh) {
-        this.hinhAnh = hinhAnh;
+    public void setAddress(String address) {
+        this.address = address;
     }
+
 
     public Set<Role> getRoles() {
         return roles;
@@ -124,4 +137,13 @@ public class User {
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
+
+    public Set<Order> getOrders() {
+        return this.orders;
+    }
+
+    public void setOrders(Set<Order> orders) {
+        this.orders = orders;
+    }
+
 }

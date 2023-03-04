@@ -7,16 +7,18 @@ public class SignUpForm {
     private String username;
     private String email;
     private String password;
+    private String address;
     private Set<String> roles;
 
     public SignUpForm() {
     }
 
-    public SignUpForm(String name, String username, String email, String password, Set<String> roles) {
+    public SignUpForm(String name, String username, String email, String password,String address, Set<String> roles) {
         this.name = name;
         this.username = username;
         this.email = email;
         this.password = password;
+        this.address = address;
         this.roles = roles;
     }
 
@@ -51,6 +53,16 @@ public class SignUpForm {
     public void setPassword(String password) {
         this.password = password;
     }
+
+
+    public String getAddress() {
+        return this.address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
 
     public Set<String> getRoles() {
         return roles;

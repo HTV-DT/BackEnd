@@ -27,7 +27,7 @@ public class JwtProvider {//Tạo Token
         return Jwts.builder().setSubject(userPrinciple.getUsername()).setIssuedAt(new Date()).setExpiration(new Date(new Date().getTime()+jwtExpriration*1000))
                 .signWith(SignatureAlgorithm.HS512,jwtSecret)
                 .compact();
-    }   
+    }       
     
     //Các lổi có thể xuất hiện
     public boolean validateToken(String token){
