@@ -126,16 +126,16 @@ public class AuthController {
         return ResponseEntity.ok(products);
     }
 
-    @PostMapping("/add/product")
-    public ResponseEntity<?> register(@Valid @RequestBody CartItemForm cartItemForm, BindingResult bindingResult)  {
-         var user =userService.findById(cartItemForm.getUserId());
-         var product =productService.findByProduct_id(cartItemForm.getProductId());
-         User userId=user.get();
-         Product productId=product.get();
-         userId.addProduct(productId,cartItemForm.getQuantity(),cartItemForm.getSizeProduct());
-        userService.save(userId);
-        return new ResponseEntity<>(new ResponMessage("yes"), HttpStatus.OK);
-    }
+//     @PostMapping("/add/product")
+//     public ResponseEntity<?> register(@Valid @RequestBody CartItemForm cartItemForm, BindingResult bindingResult)  {
+//          var user =userService.findById(cartItemForm.getUserId());
+//          var product =productService.findByProduct_id(cartItemForm.getProductId());
+//          User userId=user.get();
+//          Product productId=product.get();
+//          userId.addProduct(productId,cartItemForm.getQuantity(),cartItemForm.getSizeProduct());
+//         userService.save(userId);
+//         return new ResponseEntity<>(new ResponMessage("yes"), HttpStatus.OK);
+//     }
 
     @GetMapping("/CartItems") // List Products
     public ResponseEntity<List<CartItem>> listRegisteredCartItem() {
