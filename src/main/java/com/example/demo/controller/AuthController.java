@@ -1,18 +1,25 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.request.CartItemForm;
 import com.example.demo.dto.request.SignInForm;
 import com.example.demo.dto.request.SignUpForm;
 import com.example.demo.dto.response.JwtResponse;
 import com.example.demo.dto.response.ResponMessage;
+import com.example.demo.model.CartItem;
 import com.example.demo.model.Product;
 import com.example.demo.model.Role;
 import com.example.demo.model.RoleName;
 import com.example.demo.model.User;
+import com.example.demo.model.UserProductPK;
 import com.example.demo.security.jwt.JwtProvider;
 import com.example.demo.security.userprincal.UserPrinciple;
+import com.example.demo.service.impl.CartItemServiceImpl;
 import com.example.demo.service.impl.ProductServiceImpl;
 import com.example.demo.service.impl.RoleServiceImpl;
 import com.example.demo.service.impl.UserServiceImpl;
+
+import lombok.var;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +44,7 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @RequestMapping("/api/auth")
@@ -47,6 +55,8 @@ public class AuthController {
     UserServiceImpl userService;
     @Autowired
     ProductServiceImpl productService;
+    @Autowired
+    CartItemServiceImpl cartItemService;
     @Autowired
     RoleServiceImpl roleService;
     @Autowired
@@ -115,4 +125,33 @@ public class AuthController {
         List<Product> products = productService.findAllProduct();
         return ResponseEntity.ok(products);
     }
+
+    @PostMapping("/add/product")
+    public ResponseEntity<?> register(@Valid @RequestBody CartItemForm cartItemForm, BindingResult bindingResult)  {
+         var user =userService.findById(cartItemForm.getUserId());
+         var product =productService.findByProduct_id(cartItemForm.getProductId());
+         User userId=user.get();
+         Product productId=product.get();
+         userId.addProduct(productId,cartItemForm.getQuantity(),cartItemForm.getSizeProduct());
+        userService.save(userId);
+        return new ResponseEntity<>(new ResponMessage("yes"), HttpStatus.OK);
+    }
+
+    @GetMapping("/CartItems") // List Products
+    public ResponseEntity<List<CartItem>> listRegisteredCartItem() {
+        List<CartItem> cartItems = cartItemService.findAllCartItems();
+        return ResponseEntity.ok(cartItems);
+    }
+    
+    @DeleteMapping("/deleteProduct")
+    public  ResponseEntity<String> deleteNhanVien(@Valid @RequestBody CartItemForm cartItemForm) {
+        var user =userService.findById(cartItemForm.getUserId());
+        var product =productService.findByProduct_id(cartItemForm.getProductId());
+        User userId=user.get();
+        Product productId=product.get();
+        userId.removeProduct(productId);
+        userService.save(userId);
+        return new ResponseEntity<String>(" deleted successfully!.", HttpStatus.OK);
+    }
+
 }

@@ -4,9 +4,12 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 @Entity
@@ -37,19 +40,29 @@ public class Product {
     @JoinColumn(name="category_id", nullable=false) //ctegory_id chính là trường khoá phụ trong table Product liên kết với khóa chính trong table Category
     private Category category;
     
-
     
+    @OneToMany(mappedBy="product") 
+    Set<CartItem> cartItems;
+
+ 
+    @OneToMany(fetch = FetchType.LAZY,mappedBy="product",cascade = CascadeType.ALL) // chú ý biến Category này được khai báo trong Class Product bên dưới. Chúng phải giống y chang nhau cái tên
+    Set<OrderItem> orderItems= new HashSet<>();
+
     public Product() {
     }
 
-    public Product(Long product_id, String product_name, String description, Double price, String image_url) {
-        this.product_id = product_id;
+
+    public Product( String product_name, String description, Double price, String image_url, Set<ProductSize> productSizes, Category category) {
+      
         this.product_name = product_name;
         this.description = description;
         this.price = price;
         this.image_url = image_url;
-
+        this.productSizes = productSizes;
+        this.category = category;
     }
+   
+
 
     public Long getProduct_id() {
         return this.product_id;
@@ -58,6 +71,7 @@ public class Product {
     public void setProduct_id(Long product_id) {
         this.product_id = product_id;
     }
+   
 
     public String getProduct_name() {
         return this.product_name;
@@ -108,7 +122,16 @@ public class Product {
         this.category = category;
     }
 
+    
+    public Set<CartItem> getCartItems() {
+        return this.cartItems;
+    }
 
+    public void setCartItems(Set<CartItem> cartItems) {
+        this.cartItems = cartItems;
+    }
+
+    
     @Override
     public String toString() {
         return "{" +
@@ -117,9 +140,12 @@ public class Product {
             ", description='" + getDescription() + "'" +
             ", price='" + getPrice() + "'" +
             ", image_url='" + getImage_url() + "'" +
-            ", productSizes='" + getProductSizes() + "'" +
-            ", category='" + getCategory() + "'" +
+            ", productSizes='" + getProductSizes() +
             "}";
     }
+
+
+
+
 
 }

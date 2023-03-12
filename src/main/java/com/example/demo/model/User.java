@@ -1,6 +1,10 @@
 package com.example.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
@@ -8,6 +12,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 @Entity
@@ -47,13 +52,20 @@ public class User {
     joinColumns = @JoinColumn(name = "user_id"),inverseJoinColumns = @JoinColumn(name = "role_id"))
     Set<Role> roles = new HashSet<>();
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "cart_items",
-    joinColumns = @JoinColumn(name = "user_id"),inverseJoinColumns = @JoinColumn(name = "product_id"))
-    Set<Product> products = new HashSet<>();
+    // @ManyToMany(fetch = FetchType.EAGER)
+    // @JoinTable(name = "cart_items",
+    // joinColumns = @JoinColumn(name = "user_id"),inverseJoinColumns = @JoinColumn(name = "product_id"))
+    // Set<Product> products = new HashSet<>();
 
     @OneToMany(mappedBy="user") // chú ý biến Category này được khai báo trong Class Product bên dưới. Chúng phải giống y chang nhau cái tên
     private Set<Order> orders;
+
+    
+    @JsonManagedReference
+    @OneToMany(fetch = FetchType.LAZY,mappedBy="user",cascade = CascadeType.ALL) // chú ý biến Category này được khai báo trong Class Product bên dưới. Chúng phải giống y chang nhau cái tên
+    Set<CartItem> cartItems= new HashSet<>();
+
+    
 
     public User() {
     }
@@ -144,6 +156,46 @@ public class User {
 
     public void setOrders(Set<Order> orders) {
         this.orders = orders;
+    }
+
+    
+    public Set<CartItem> getCartItems() {
+        return this.cartItems;
+        
+    }
+    public void setCartItems(Set<CartItem> cartItems) {
+        this.cartItems = cartItems;
+    }
+
+    public void addProduct(Product product, Long quantity, String sizeProduct ) {
+        CartItem cartItem = new CartItem(this, product,quantity,sizeProduct);
+        cartItems.add(cartItem);
+    }
+ 
+    public void removeProduct(Product product) {
+        for (Iterator<CartItem> iterator = cartItems.iterator(); iterator.hasNext();) {
+            CartItem cartItem = iterator.next();
+ 
+            if (cartItem.getUser().equals(this) && cartItem.getProduct().equals(product)) {
+                iterator.remove();
+                cartItem.setUser(null);
+                cartItem.setProduct(null);
+            }
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "{" +
+            " id='" + getId() + "'" +
+            ", name='" + getName() + "'" +
+            ", username='" + getUsername() + "'" +
+            ", email='" + getEmail() + "'" +
+            ", password='" + getPassword() + "'" +
+            ", address='" + getAddress() + "'" +
+            ", roles='" + getRoles() + "'" +
+            ", orders='" + getOrders() +
+            "}";
     }
 
 }
