@@ -128,8 +128,8 @@ public class AuthController {
 
     @PostMapping("/add/product")
     public ResponseEntity<?> register(@Valid @RequestBody CartItemForm cartItemForm, BindingResult bindingResult)  {
-         var user =userService.findById(cartItemForm.getUserId());
-         var product =productService.findByProduct_id(cartItemForm.getProductId());
+         Optional<User> user =userService.findById(cartItemForm.getUserId());
+         Optional<Product> product =productService.findByProduct_id(cartItemForm.getProductId());
          User userId=user.get();
          Product productId=product.get();
          userId.addProduct(productId,cartItemForm.getQuantity(),cartItemForm.getSizeProduct());
