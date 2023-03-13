@@ -126,6 +126,12 @@ public class AuthController {
         return ResponseEntity.ok(products);
     }
 
+    @GetMapping("/products/{id}") // List Products
+    public ResponseEntity<Optional<Product>> productId(@PathVariable("id") long id) {
+        Optional<Product> product =productService.findByProduct_id(id);
+        return ResponseEntity.ok(product);
+    }
+
     @PostMapping("/add/product")
     public ResponseEntity<?> register(@Valid @RequestBody CartItemForm cartItemForm, BindingResult bindingResult)  {
          Optional<User> user =userService.findById(cartItemForm.getUserId());
