@@ -145,8 +145,8 @@ public class AuthController {
     
 //     @DeleteMapping("/deleteProduct")
 //     public  ResponseEntity<String> deleteNhanVien(@Valid @RequestBody CartItemForm cartItemForm) {
-//         var user =userService.findById(cartItemForm.getUserId());
-//         var product =productService.findByProduct_id(cartItemForm.getProductId());
+//         Optional<User> user =userService.findById(cartItemForm.getUserId());
+//         Optional<Product> product =productService.findByProduct_id(cartItemForm.getProductId());
 //         User userId=user.get();
 //         Product productId=product.get();
 //         userId.removeProduct(productId);
