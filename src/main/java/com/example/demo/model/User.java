@@ -56,7 +56,8 @@ public class User {
     // @JoinTable(name = "cart_items",
     // joinColumns = @JoinColumn(name = "user_id"),inverseJoinColumns = @JoinColumn(name = "product_id"))
     // Set<Product> products = new HashSet<>();
-
+    
+    @JsonManagedReference
     @OneToMany(mappedBy="user") // chú ý biến Category này được khai báo trong Class Product bên dưới. Chúng phải giống y chang nhau cái tên
     private Set<Order> orders;
 

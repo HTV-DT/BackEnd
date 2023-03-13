@@ -27,7 +27,7 @@ public class Order {
     @Size(min=0 ,max=10)
     private Double total_price;
 
-
+    @JsonManagedReference
     @OneToMany(mappedBy="order") // chú ý biến Category này được khai báo trong Class Product bên dưới. Chúng phải giống y chang nhau cái tên
     Set<OrderItem> orderItems;
     
