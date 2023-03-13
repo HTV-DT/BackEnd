@@ -35,7 +35,7 @@ public class CartItem implements Serializable {
     @JoinColumn(name = "user_id")
     private User user;
 
-    
+    @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("product_id")
     @JoinColumn(name = "product_id")
