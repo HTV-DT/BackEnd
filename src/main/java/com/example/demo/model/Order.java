@@ -12,9 +12,13 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
-
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "order_id")
 @Entity
 @Table(name = "orders")
 public class Order {
@@ -27,7 +31,7 @@ public class Order {
     @Size(min=0 ,max=10)
     private Double total_price;
 
-    @JsonManagedReference
+    
     @OneToMany(mappedBy="order") // chú ý biến Category này được khai báo trong Class Product bên dưới. Chúng phải giống y chang nhau cái tên
     Set<OrderItem> orderItems;
     

@@ -149,15 +149,15 @@ public class AuthController {
         return ResponseEntity.ok(cartItems);
     }
     
-//     @DeleteMapping("/deleteProduct")
-//     public  ResponseEntity<String> deleteNhanVien(@Valid @RequestBody CartItemForm cartItemForm) {
-//         Optional<User> user =userService.findById(cartItemForm.getUserId());
-//         Optional<Product> product =productService.findByProduct_id(cartItemForm.getProductId());
-//         User userId=user.get();
-//         Product productId=product.get();
-//         userId.removeProduct(productId);
-//         userService.save(userId);
-//         return new ResponseEntity<String>(" deleted successfully!.", HttpStatus.OK);
-//     }
+    // @DeleteMapping("/deleteProduct")
+    // public  ResponseEntity<String> deleteCartItem(@Valid @RequestBody CartItemForm cartItemForm) {
+    //     Optional<User> user =userService.findById(cartItemForm.getUserId());
+    //     Optional<Product> product =productService.findByProduct_id(cartItemForm.getProductId());
+    //     User userId=user.get();
+    //     Product productId=product.get();
+    //     userId.removeProduct(productId);
+    //     userService.save(userId);
+    //     return new ResponseEntity<String>(" deleted successfully!.", HttpStatus.OK);
+    // }
 
 }
