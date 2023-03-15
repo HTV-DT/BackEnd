@@ -42,7 +42,7 @@ public class UserPrinciple implements UserDetails{
     public static UserPrinciple build(User user){
         List<GrantedAuthority> authorities = user.getRoles().stream().map(role -> new SimpleGrantedAuthority(role.getName().name())).collect(Collectors.toList());
         return new UserPrinciple(
-            user.getId(),
+                user.getId(),
                 user.getName(),
                 user.getUsername(),
                 user.getEmail(),
@@ -50,6 +50,32 @@ public class UserPrinciple implements UserDetails{
                 authorities
         );
     }
+
+
+    public Long getId() {
+        return this.id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getEmail() {
+        return this.email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+ 
+
 
     public String getName() {
         return name;
