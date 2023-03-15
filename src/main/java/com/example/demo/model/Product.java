@@ -13,6 +13,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "product_id")
 @Entity
 @Table(name = "products")
 public class Product {
