@@ -12,7 +12,8 @@ import javax.persistence.MapsId;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import lombok.Data;
 
@@ -31,6 +32,7 @@ public class CartItem implements Serializable {
     @JoinColumn(name = "user_id")
     private User user;
 
+   
     @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("product_id")

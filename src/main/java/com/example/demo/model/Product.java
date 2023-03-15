@@ -6,15 +6,13 @@ import javax.validation.constraints.Size;
 
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-@JsonIdentityInfo(
-        generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "product_id")
 @Entity
 @Table(name = "products")
 public class Product {
@@ -43,7 +41,7 @@ public class Product {
     @JoinColumn(name="category_id", nullable=false) //ctegory_id chính là trường khoá phụ trong table Product liên kết với khóa chính trong table Category
     private Category category;
     
-    
+    @JsonManagedReference
     @OneToMany(mappedBy="product") 
     Set<CartItem> cartItems;
 

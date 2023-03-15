@@ -138,6 +138,7 @@ public class AuthController {
          Optional<Product> product =productService.findByProduct_id(cartItemForm.getProductId());
          User userId=user.get();
          Product productId=product.get();
+         
          userId.addProduct(productId,cartItemForm.getQuantity(),cartItemForm.getSizeProduct());
         userService.save(userId);
         return new ResponseEntity<>(new ResponMessage("yes"), HttpStatus.OK);
@@ -146,6 +147,7 @@ public class AuthController {
     @GetMapping("/CartItems") // List Products
     public ResponseEntity<List<CartItem>> listRegisteredCartItem() {
         List<CartItem> cartItems = cartItemService.findAllCartItems();
+        
         return ResponseEntity.ok(cartItems);
     }
     

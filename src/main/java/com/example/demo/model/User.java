@@ -17,9 +17,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-@JsonIdentityInfo(
-        generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "id")
+
 @Entity
 @Table(name = "users", uniqueConstraints = {
         @UniqueConstraint(columnNames = {
@@ -67,7 +65,7 @@ public class User {
     private Set<Order> orders;
 
     
-
+    @JsonManagedReference
     @OneToMany(fetch = FetchType.LAZY,mappedBy="user",cascade = CascadeType.ALL) // chú ý biến Category này được khai báo trong Class Product bên dưới. Chúng phải giống y chang nhau cái tên
     Set<CartItem> cartItems= new HashSet<>();
 
