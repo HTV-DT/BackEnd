@@ -26,12 +26,14 @@ public class CartItem implements Serializable {
     @EmbeddedId
     private UserProductPK pk;
 
+    @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("user_id")
     @JoinColumn(name = "user_id")
     private User user;
 
    
+    @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("product_id")
     @JoinColumn(name = "product_id")
@@ -57,10 +59,17 @@ public class CartItem implements Serializable {
         this.sizeProduct = sizeProduct;
     }
 
-
+    public User getUser() {
+        return this.user;
+    }
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Product getProduct() {
+        
+        return this.product;
     }
 
     public void setProduct(Product product) {
@@ -97,7 +106,8 @@ public class CartItem implements Serializable {
     public String toString() {
         return "{" +
             " pk='" + getPk() + "'" +
-            ", user='"  + "'" +
+            ", user='" + getUser() + "'" +
+            ", product='" + getProduct() + "'" +
             ", quantity='" + getQuantity() + "'" +
             ", sizeProduct='" + getSizeProduct() + "'" +
             "}";

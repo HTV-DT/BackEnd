@@ -184,11 +184,11 @@ public class User {
         for (Iterator<CartItem> iterator = cartItems.iterator(); iterator.hasNext();) {
             CartItem cartItem = iterator.next();
  
-            // if (cartItem.getUser().equals(this) && cartItem.getProduct().equals(product)) {
-            //     iterator.remove();
-            //     cartItem.setUser(null);
-            //     cartItem.setProduct(null);
-            // }
+            if (cartItem.getUser().equals(this) && cartItem.getProduct().equals(product)) {
+                iterator.remove();
+                cartItem.setUser(null);
+                cartItem.setProduct(null);
+            }
         }
     }
 
