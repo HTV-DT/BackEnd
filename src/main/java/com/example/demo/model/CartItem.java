@@ -18,6 +18,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import lombok.Data;
 
+@Data
 @Entity
 @Table(name = "cart_items")
 public class CartItem implements Serializable {
